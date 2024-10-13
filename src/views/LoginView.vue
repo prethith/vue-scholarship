@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <h1>Login: </h1>
-    <input type="text" v-model="studentIDLogin" placeholder="Enter your student id"  class="inputUsername"/>
+    <input type="text" v-model="loginID" placeholder="Enter your user ID: "  class="inputUsername"/>
     <button @click="login" class="loginBtn">Login</button>
     <p v-if="invalidIDNotif">Invalid user ID!</p>
   </div>
@@ -15,7 +15,7 @@
 
 
   // Reactive username
-  const studentIDLogin = ref('');
+  const loginID = ref('');
   const userIDs = ref([]);
   const invalidIDNotif = ref(false);
   // Router instance
@@ -45,27 +45,33 @@
   // Login function
   const login = () => {
 
-    if (!studentIDLogin.value) {
+    if (!loginID.value) {
       invalidIDNotif.value = true;  // Show error if input is empty
       return;
     }
 
-    if (userIDs.value.includes(parseInt(studentIDLogin.value))) {
+    if (userIDs.value.includes(parseInt(loginID.value))) {
 
       invalidIDNotif.value = false;
 
-      emit('login-success', studentIDLogin.value); // Emit the login success event
-      console.log(studentIDLogin.value);
-      localStorage.setItem('studentid', studentIDLogin.value);
-      router.push({ name: 'Student' }); // Navigate to HomePage
+      emit('login-success', loginID.value); // Emit the login success event
+      console.log(loginID.value);
+      localStorage.setItem('studentid', loginID.value);
+      router.push({ name: 'Student' }); // Navigate to StudentView
+    } else if(loginID.value === "admin") {
+        emit('login-success', loginID.value); // Emit the login success event
+        console.log(loginID.value);
+        localStorage.setItem('admin', loginID.value);
+        router.push({ name: 'Admin' }); // Navigate to StudentView
+
     } else {
       invalidIDNotif.value = true;
     }
   };
 
 
-  // Watch for changes on studentIDLogin to reset the invalid notification
-  watch(studentIDLogin, () => {
+  // Watch for changes on loginID to reset the invalid notification
+  watch(loginID, () => {
     invalidIDNotif.value = false;  // Reset notification whenever the input changes
   });
 

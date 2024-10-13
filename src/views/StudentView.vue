@@ -1,7 +1,7 @@
 <script setup>
   import { defineProps, defineEmits, onMounted, ref } from 'vue';
   import { supabase } from '../lib/supabaseClient';
-  import { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships } from '../utils/scholarshipManager';
+  import { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships, applyForScholarship } from '../utils/scholarshipManager';
 
   const students = ref([]);
   const scholarships = ref([]);
@@ -9,6 +9,8 @@
   const assignedScholarships = ref([]);
   const userID = localStorage.getItem('studentid');
   const studentData = ref({});
+  const applicationMessage = ref('');
+  const acceptedScholarships = ref([]);
   // Define props
   const props = defineProps({
     username: {
@@ -17,7 +19,14 @@
     },
   }); 
 
-
+  async function handleApplyScholarship(scholarship_id) {
+    console.log(`${userID} applied for scholarship ${scholarship_id}`);
+    const result = await applyForScholarship(userID, scholarship_id);
+    applicationMessage.value = result.message;
+    if (result.success) {
+      console.log(`Successfully entered data!`);
+    }
+  }
 
   // fetch student data from the database based on userID
   async function getStudentData() {
@@ -51,17 +60,37 @@
       // if it is accepted or rejected, don't do anything
       if(data[0].status === "accepted" | data[0].status === "rejected") {
         console.log(`Nothing to do here! Already made a decision!`);
+        alert(`Nothing to do here! Already made a decision!`);
       } else if (data[0].status === "pending") {
-        console.log(`Scholarship ${scholarship_id} has been accepted!`);
-        // update the database
-        const { error } = await supabase
-        .from("AssignedScholarships")
-        .update({ status:  "accepted"})
-        .eq('student_id', userID)
-        .eq('scholarship_id', scholarship_id);
+        try {
+          // this executes a function that updates AssignedScholarships and inserts into AcceptedScholarships
 
-        if(error) {
-          console.log(`Error updating data! ${error.message}`);
+          const { data:returnInfo, error } = await supabase.rpc('acceptscholarship', {
+            p_student_id: userID,
+            p_scholarship_id: scholarship_id,
+          });
+
+          // const { data:rpcTest, error:rpcError } = await supabase
+          //   .rpc('hello_world');
+
+          console.log(returnInfo);
+          if (error) {
+            // check if error includes a conflict
+            if (error.message.includes('Scholarship from this domain already accepted')) {
+              console.error('Error: You have already accepted a scholarship from this domain.');
+              alert('You have already accepted a scholarship from this domain.');
+            } else { 
+              console.error('Error executing accept_scholarship:', error.message);
+            }
+            
+          } else {
+            console.log('Scholarship accepted and recorded successfully');
+            alert('Scholarship accepted successfully!');
+          }
+        } catch (err) {
+          console.error('Error accepting scholarship:', err);
+          alert('An unexpected error occurred. Please try again.');
+
         }
       }
     }
@@ -140,12 +169,12 @@
   onMounted(async () => {
     students.value = await getStudents();
     scholarships.value = await getScholarships();
-    console.log("hello", scholarships.value);
-    // console.log(students.value);
-    if(students.value && scholarships.value) {
-      assignScholarships(students.value, scholarships.value);
-    }
-    getStudentData();
+    // console.log("hello", scholarships.value);
+    // // console.log(students.value);
+    // if(students.value && scholarships.value) {
+    //   assignScholarships(students.value, scholarships.value);
+    // }
+    await getStudentData();
     eligibleScholarships.value = await getEligibleScholarships(studentData.value, scholarships.value);
     assignedScholarships.value = await getAssignedScholarships(userID);
   })
@@ -161,7 +190,9 @@
         <ul>
           <li v-for="scholarship in eligibleScholarships" :key="scholarship.scholarship_id">
             {{ scholarship.scholarship_name }}
+            <button @click="handleApplyScholarship(scholarship.scholarship_id)" class="choiceBtn">Apply</button>
           </li>
+          <p>{{ applicationMessage }}</p>
         </ul>
       </div>
       <div class="assigned">

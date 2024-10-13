@@ -1,10 +1,6 @@
 import { supabase } from '../lib/supabaseClient'
 
 
-let assignedScholarships = {};
-let acceptedScholarships = {};
-// const choiceMade = ref(false);
-
 async function getStudents() {
   const { data, error } = await supabase.from('Students').select().order('student_id', { ascending: true});  
   return data;
@@ -87,155 +83,154 @@ async function getAssignedScholarships(student_id) {
   return data;
 }
 
+
+// apply for eligible scholarship
+async function applyForScholarship(studentId, scholarshipId) {
+  const { data, error } = await supabase
+    .from("Applications")
+    .insert({
+      student_id: studentId,
+      scholarship_id: scholarshipId,
+    });
+
+  if (error) {
+    if (error.code === "23505") {
+      // Unique constraint violation
+      console.error("Student has already applied for this scholarship");
+      return {
+        success: false,
+        message: "You have already applied for this scholarship.",
+      };
+    }
+    console.error("Error applying for scholarship:", error.message);
+    return {
+      success: false,
+      message: "An error occurred while applying for the scholarship.",
+    };
+  } else {
+    console.log(
+      `Student ${studentId} applied for scholarship ${scholarshipId}`
+    );
+    return {
+      success: true,
+      message: "Successfully applied for the scholarship.",
+    };
+  }
+}
+
+
 // loop through the list of students
 
-async function assignScholarships(students, scholarships) {
+async function assignScholarships() {
   console.log("Starting scholarship assignment process");
 
-  // Ensure data is fetched before processing
-  await Promise.all([getStudents(), getScholarships()]); // Wait for both fetches
+  // Fetch all scholarships
+  const { data: scholarships, error: scholarshipsError } = await supabase
+    .from("Scholarships")
+    .select("*");
 
-  // Check if students and scholarships have valid data
-  if (!students || !Array.isArray(students) || students.length === 0) {
-    console.error("No students data available");
-    return;
-  }
-
-  if (
-    !scholarships ||
-    !Array.isArray(scholarships) ||
-    scholarships.length === 0
-  ) {
-    console.error("No scholarships data available");
+  if (scholarshipsError) {
+    console.error("Error fetching scholarships:", scholarshipsError.message);
     return;
   }
 
   for (const scholarship of scholarships) {
     console.log(`Processing scholarship: ${scholarship.scholarship_name}`);
 
-    // Fetch the current capacity from the database
-    const { data: currentScholarship, error: fetchScholarshipError } =
-      await supabase
-        .from("Scholarships")
-        .select("capacity")
-        .eq("scholarship_id", scholarship.scholarship_id)
-        .single();
+    // Fetch pending applications for this scholarship
+    const { data: applications, error: applicationsError } = await supabase
+      .from("Applications")
+      .select("student_id, scholarship_id")
+      .eq("scholarship_id", scholarship.scholarship_id)
+      .eq("status", "pending");
 
-    if (fetchScholarshipError) {
-      console.error(
-        "Error fetching current scholarship capacity:",
-        fetchScholarshipError.message
-      );
+    if (applicationsError) {
+      console.error("Error fetching applications:", applicationsError.message);
       continue;
     }
 
-    // Use the fetched capacity instead of the local variable
-    if (currentScholarship.capacity <= 0) {
-      console.log(
-        `No capacity left for ${scholarship.scholarship_name}. Skipping.`
-      );
+    // Fetch student details for these applications
+    const studentIds = applications.map((app) => app.student_id);
+    const { data: students, error: studentsError } = await supabase
+      .from("Students")
+      .select("*")
+      .in("student_id", studentIds);
+
+    if (studentsError) {
+      console.error("Error fetching students:", studentsError.message);
       continue;
     }
 
-    // Sort students based on criteria
-    if (scholarship.sorting_criteria === 1) {
-      students.sort((a, b) => a.rank - b.rank);
-    } else if (scholarship.sorting_criteria === 2) {
-      students.sort((a, b) => a.income - b.income);
-    }
-
-    // Loop through sorted students to assign the scholarship
-    for (const student of students) {
-      // Check if this student has already been assigned or rejected this scholarship
-      const { data: assignmentData, error: assignmentCheckError } =
-        await supabase
-          .from("AssignedScholarships")
-          .select("status")
-          .eq("student_id", student.student_id)
-          .eq("scholarship_id", scholarship.scholarship_id)
-          .limit(1);
-
-      if (assignmentCheckError) {
-        console.error(
-          "Error checking for assigned/rejected scholarships:",
-          assignmentCheckError.message
-        );
-        continue;
+    // Sort applicants based on the scholarship criteria
+    let sortedApplicants = students.sort((a, b) => {
+      if (scholarship.sorting_criteria === 1) {
+        return a.rank - b.rank;
+      } else if (scholarship.sorting_criteria === 2) {
+        return a.income - b.income;
       }
+      return 0;
+    });
 
-      // Skip if the scholarship was previously assigned or rejected by this student
-      if (assignmentData.length > 0) {
-        console.log(
-          `Skipping student ${student.student_id} for scholarship ${scholarship.scholarship_id} (status: ${assignmentData[0].status})`
-        );
-        continue;
-      }
+    let assignedCount = 0;
+    for (const student of sortedApplicants) {
+      if (assignedCount >= scholarship.capacity) break;
 
       if (isEligible(student, scholarship)) {
-        // Double-check the current capacity before assigning
-        const { data: latestCapacity, error: latestCapacityError } =
-          await supabase
-            .from("Scholarships")
-            .select("capacity")
-            .eq("scholarship_id", scholarship.scholarship_id)
-            .single();
+        // Assign the scholarship
+        const { error: assignError } = await supabase
+          .from("AssignedScholarships")
+          .insert({
+            student_id: student.student_id,
+            scholarship_id: scholarship.scholarship_id,
+            status: "pending",
+          });
 
-        if (latestCapacityError) {
-          console.error(
-            "Error fetching latest scholarship capacity:",
-            latestCapacityError.message
-          );
-          continue;
-        }
-
-        if (latestCapacity.capacity > 0) {
-          // Assign the scholarship
-          const { data, error: assignError } = await supabase
-            .from("AssignedScholarships")
-            .insert({
-              student_id: student.student_id,
-              scholarship_id: scholarship.scholarship_id,
-              status: "pending",
-            });
-
-          if (assignError) {
-            console.error("Error assigning scholarship:", assignError.message);
-          } else {
-            console.log(
-              `Assigned ${scholarship.scholarship_name} to student ${student.student_id}`
-            );
-
-            // Decrease the capacity
-            const { data: updatedCapacity, error: decreaseError } =
-              await supabase.rpc("decreaseCapacity", {
-                sch_id: scholarship.scholarship_id,
-              });
-
-            if (decreaseError) {
-              console.error(
-                "Error updating scholarship capacity:",
-                decreaseError.message
-              );
-            } else {
-              console.log(
-                `Updated capacity of ${scholarship.scholarship_name} to ${updatedCapacity}`
-              );
-            }
-
-            // Break the loop if we've assigned the scholarship
-            break;
-          }
+        if (assignError) {
+          console.error("Error assigning scholarship:", assignError.message);
         } else {
           console.log(
-            `No capacity left for ${scholarship.scholarship_name}. Moving to next scholarship.`
+            `Assigned ${scholarship.scholarship_name} to student ${student.student_id}`
           );
-          break;
+          assignedCount++;
+
+          // Update application status
+          await supabase
+            .from("Applications")
+            .update({ status: "assigned" })
+            .eq("student_id", student.student_id)
+            .eq("scholarship_id", scholarship.scholarship_id);
         }
       }
     }
+
+    // Update scholarship capacity
+    const { error: updateError } = await supabase
+      .from("Scholarships")
+      .update({ capacity: scholarship.capacity - assignedCount })
+      .eq("scholarship_id", scholarship.scholarship_id);
+
+    if (updateError) {
+      console.error(
+        "Error updating scholarship capacity:",
+        updateError.message
+      );
+    }
   }
+
+}
+
+export async function runAssignmentProcess() {
+  console.log("Running scholarship assignment process");
+
+  // Fetch all students and scholarships
+  const students = await getStudents();
+  const scholarships = await getScholarships();
+
+  // Run the assignment process
+  await assignScholarships(students, scholarships);
+
   console.log("Scholarship assignment process completed");
 }
 
 // export functions to be used in other files
-export { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships };
+export { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships, applyForScholarship };
