@@ -1,7 +1,7 @@
 <script setup>
-  import { defineProps, defineEmits, onMounted, ref } from 'vue';
+  import { defineProps, defineEmits, onMounted, ref, watch } from 'vue';
   import { supabase } from '../lib/supabaseClient';
-  import { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships, applyForScholarship } from '../utils/scholarshipManager';
+  import { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships, applyForScholarship, getAcceptedScholarships } from '../utils/scholarshipManager';
 
   const students = ref([]);
   const scholarships = ref([]);
@@ -19,6 +19,7 @@
     },
   }); 
 
+  // handle applying for eligible scholarships
   async function handleApplyScholarship(scholarship_id) {
     console.log(`${userID} applied for scholarship ${scholarship_id}`);
     const result = await applyForScholarship(userID, scholarship_id);
@@ -27,6 +28,8 @@
       console.log(`Successfully entered data!`);
     }
   }
+
+ 
 
   // fetch student data from the database based on userID
   async function getStudentData() {
@@ -169,15 +172,17 @@
   onMounted(async () => {
     students.value = await getStudents();
     scholarships.value = await getScholarships();
-    // console.log("hello", scholarships.value);
-    // // console.log(students.value);
-    // if(students.value && scholarships.value) {
-    //   assignScholarships(students.value, scholarships.value);
-    // }
     await getStudentData();
     eligibleScholarships.value = await getEligibleScholarships(studentData.value, scholarships.value);
     assignedScholarships.value = await getAssignedScholarships(userID);
+    acceptedScholarships.value = await getAcceptedScholarships(userID);
   })
+
+
+  watch(acceptedScholarships, async(newV, oldV) => {
+    console.log(acceptedScholarships.value);
+    await getAcceptedScholarships(userID);
+  });
 </script>
 
 
@@ -208,6 +213,15 @@
                 Reject
               </button>
             </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="accepted">
+        <h3> List of Accepted Scholarships: </h3>
+        <ul>
+          <li v-for="scholarship in acceptedScholarships" :key="scholarship.scholarship_id">
+            {{ scholarship.Scholarships.scholarship_name }}
           </li>
         </ul>
       </div>

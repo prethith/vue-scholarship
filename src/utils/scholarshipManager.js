@@ -219,6 +219,26 @@ async function assignScholarships() {
 
 }
 
+ async function getAcceptedScholarships(userID) {
+   // fetch the data from the AcceptedScholarship table
+   const { data, error } = await supabase
+     .from("AcceptedScholarships")
+     .select("scholarship_id, Scholarships (scholarship_name)")
+     .eq("student_id", userID);
+
+   if (error) {
+     console.log(`Error fetching data ${error.message}`);
+   } else {
+     if (data.length === 0) {
+        console.log(`Nothing accepted so far!`);
+        return null;
+     } else {
+       console.log("Accepted Scholarships: ", data);
+       return data;
+     }
+   }
+ }
+
 export async function runAssignmentProcess() {
   console.log("Running scholarship assignment process");
 
@@ -233,4 +253,4 @@ export async function runAssignmentProcess() {
 }
 
 // export functions to be used in other files
-export { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships, applyForScholarship };
+export { assignScholarships, getEligibleScholarships, getStudents, getScholarships, getAssignedScholarships, applyForScholarship, getAcceptedScholarships };
