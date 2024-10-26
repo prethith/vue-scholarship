@@ -65,6 +65,14 @@ const handleLogout = () => {
   padding: 20px;
 }
 
+h1 {
+  color: #0e0e0e;
+  font-weight: 800;
+  font-size: 40px;
+  font-family: Helvetica;
+  font-style: italic;
+}
+
 h2 {
   color: #bbb00b;
   font-weight: 800;
