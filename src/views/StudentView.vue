@@ -110,7 +110,7 @@ const handleLogout = () => {
     <section class="student-details">
       <h3>Student Details</h3>
       <p><strong>Rank:</strong> {{ studentData.rank }}</p>
-      <p><strong>Income:</strong> ${{ studentData.income }}</p>
+      <p><strong>Income:</strong> ₹{{ studentData.income }}</p>
       <p><strong>Category:</strong> {{ studentData.category_ID }}</p>
     </section>
 
@@ -161,15 +161,14 @@ const handleLogout = () => {
 
 .student-details {
   background-color: #151515;
-  border-radius: 10px;
+   
   padding: 10px;
   margin: 20px 0;
   font-family: Helvetica;
-  font-style: italic;
 }
 .scholarships {
   background-color: #151515;
-  border-radius: 10px;
+   
   padding: 10px;
   margin: 20px 0;
   font-family: Helvetica;
@@ -181,7 +180,6 @@ const handleLogout = () => {
 h1 {
   color: #111111;
   font-family: Helvetica;
-  font-style: italic;
 }
 h3 {
   color: #111111;
@@ -201,6 +199,9 @@ h3 {
 
 .choiceBtn.reject:hover {
   background-color: #902507;
+}
+ul {
+  list-style: none;
 }
 
 .container {
