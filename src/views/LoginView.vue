@@ -4,7 +4,6 @@
       <h1> Unified Scholarship Portal </h1>
     </div>
     <div class="login-container">
-      <h1>Login.</h1>
       <input
         type="text"
         v-model="loginID"
@@ -79,11 +78,11 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 /* Overall background styling */
 .app-background {
-  background-color: #0a0a0a;
-  color: #fff;
+  background-color: #fff;
+  color: #000;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -98,22 +97,21 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #f7f7f9;
+  color: #000;
   padding: 20px;
-  background-color: #080808;
-  padding-left: 50px;
-  width: 2500px;
+ 
+  width: 100%;
   max-width: 800px;
-  font-family: Helvetica;
+  font-family: Garamond;
 }
 
 .portal-header h1{
-  color: #dede04;
-  background-color: #040404;
+  color: #000000;
+  background-color: #fff;
   font-weight: 800;
-  font-size: 40px;
+  font-size: 48px;
   margin-bottom: 10px;
-  font-family: Helvetica;
+  font-family: Garamond;
   font-style: normal;
 }
 
@@ -124,12 +122,9 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #080808;
-  
-  background-color: rgb(0, 0, 0);
+  color: #0d0d0d;
+  padding: 20px;
   border-radius: 10px;
-  width:75% ;
-  height: 500px;
   max-width: 2000px;
   margin: 0 auto;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -147,16 +142,14 @@ onMounted(() => {
 
 /* Styling for buttons */
 .loginBtn {
-  width: 50%;
-  padding: 8px 16px;
-  background-color: #dede04;
-  color: #0a0a0a;
+  padding: 12px 20px;
+  background-color: #0f0e0e;
+  color: #fff;
   border: none;
   border-radius: 25px;
   font-size: 16px;
   font-family: Helvetica;
   font-weight: bold;
-  width: 50px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -168,7 +161,7 @@ onMounted(() => {
 
 /* Username input field */
 .inputUsername {
-  width: 50%;
+  width: 70%;
   padding: 12px 20px;
   border: 1px solid #4d4d4c;
   border-radius: 25px;
@@ -176,12 +169,12 @@ onMounted(() => {
   font-weight: lighter;
   outline: none;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
-  color: #ffffff;
+  color: #000;
 }
 
 /* Placeholder text styling */
 .inputUsername::placeholder {
-  color: #686868;
+  color: #38383848;
   font-weight: normal;
   font-size: 14px;
 }

@@ -115,7 +115,8 @@ const handleLogout = () => {
     </section>
 
     <section class="scholarships">
-      <div class="container eligibles">
+      <!-- Eligible Scholarships Container -->
+      <div class="scholarship-container">
         <h3>Eligible Scholarships</h3>
         <ul>
           <li v-for="scholarship in eligibleScholarships" :key="scholarship.scholarship_id">
@@ -126,7 +127,8 @@ const handleLogout = () => {
         </ul>
       </div>
 
-      <div class="container assigned">
+      <!-- Assigned Scholarships Container -->
+      <div class="scholarship-container">
         <h3>Assigned Scholarships</h3>
         <ul>
           <li v-for="scholarship in assignedScholarships" :key="scholarship.scholarship_id">
@@ -139,7 +141,8 @@ const handleLogout = () => {
         </ul>
       </div>
 
-      <div class="container accepted">
+      <!-- Accepted Scholarships Container -->
+      <div class="scholarship-container">
         <h3>Accepted Scholarships</h3>
         <ul>
           <li v-for="scholarship in acceptedScholarships" :key="scholarship.scholarship_id">
@@ -160,43 +163,64 @@ const handleLogout = () => {
 }
 
 .student-details {
-  background-color: rgb(0, 0, 0);
-   
+  background-color: #ffffff;
+  color: #000000;
   padding: 10px;
   margin: 20px 0;
-  font-family: Helvetica;
-}
-.scholarships {
-  background-color: rgb(0, 0, 0);
-   
-  padding: 10px;
-  margin: 20px 0;
-  font-family: Helvetica;
-  color: rgb(104, 93, 93);
-  font-weight: bold;
+  font-family: Garamond;
 }
 
+.scholarships {
+  padding: 10px;
+  margin: 20px 0;
+  font-family: Garamond;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* New container styling for scholarship sections */
+.scholarship-container {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.scholarship-container h3 {
+  color: #357260;
+  font-family: Garamond;
+  font-weight:800
+}
 
 h1 {
-  color: #ffffff;
-  font-family: Helvetica;
+  color: #357260;
+  font-family: Garamond;
   font-style: normal;
 }
 
-h2{
-  color: #dede04;
-  font-family: Helvetica;
+h2 {
+  color: #030303;
+  font-family: Garamond;
   font-style: normal;
-}
-h3 {
-  color: #dede04;
-  font-family: Helvetica;
+  font-size: 48px;
 }
 
 .choiceBtn {
-  margin-left: 10px;
-  background-color: rgb(0, 0, 0);
-  color: rgb(211, 210, 210);
+  background-color: #1a045e;
+  color: #ffffff;
+  border: 1px solid #5050509d;
+  padding: 6px 15px;
+  margin: 10px;
+  border-radius: 12px;
+  box-shadow: 0 10px 10px rgba(230, 202, 222, 0.2);
+}
+
+.choiceBtn:hover {
+  cursor: pointer;
+  background-color: #565a87c1;
+  color: #ffffff;
 }
 
 .choiceBtn.reject {
@@ -206,14 +230,27 @@ h3 {
 
 .choiceBtn.reject:hover {
   background-color: #902507;
-}
-ul {
-  list-style: none;
+  cursor: pointer;
 }
 
-.container {
-  margin-top: 10px;
-  width: 1500px;
-  max-width: 2000px;
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.logoutBtn {
+  margin-top: 40px;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #902507;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #902507;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.logoutBtn:hover {
+  background-color: #6c4747; /* Darker red on hover */
 }
 </style>
