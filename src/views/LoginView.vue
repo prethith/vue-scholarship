@@ -1,10 +1,9 @@
 <template>
   <div class="app-background">
     <div class="portal-header">
-      <h1> Unified Scholarship Portal. </h1>
+      <h1> Unified Scholarship Portal </h1>
     </div>
     <div class="login-container">
-      <h1>Login.</h1>
       <input
         type="text"
         v-model="loginID"
@@ -79,11 +78,11 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 /* Overall background styling */
 .app-background {
-  background-color: #000;
-  color: #fff;
+  background-color: #fff;
+  color: #000;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -98,9 +97,8 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #0d0d0d;
+  color: #000;
   padding: 20px;
-  background-color: rgb(5, 5, 5);
  
   width: 100%;
   max-width: 800px;
@@ -108,8 +106,8 @@ onMounted(() => {
 }
 
 .portal-header h1{
-  color: #bbb00b;
-  background-color: #000;
+  color: #000000;
+  background-color: #fff;
   font-weight: 800;
   font-size: 40px;
   margin-bottom: 10px;
@@ -125,10 +123,9 @@ onMounted(() => {
   gap: 20px;
   color: #0d0d0d;
   padding: 20px;
-  background-color: rgb(108, 109, 100);
   border-radius: 10px;
-  width: 1500px;
-  height: 500px;
+  /* width: 1500px;
+  height: 500px; */
   max-width: 2000px;
   margin: 0 auto;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -145,7 +142,6 @@ onMounted(() => {
 
 /* Styling for buttons */
 .loginBtn {
-  width: 100%;
   padding: 12px 20px;
   background-color: #0f0e0e;
   color: #fff;
@@ -154,7 +150,6 @@ onMounted(() => {
   font-size: 16px;
   font-family: Helvetica;
   font-weight: bold;
-  font-style: italic;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -174,12 +169,12 @@ onMounted(() => {
   font-weight: lighter;
   outline: none;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
-  color: #121212;
+  color: #000;
 }
 
 /* Placeholder text styling */
 .inputUsername::placeholder {
-  color: #383838;
+  color: #38383848;
   font-weight: normal;
   font-size: 14px;
 }

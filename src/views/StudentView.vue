@@ -160,19 +160,23 @@ const handleLogout = () => {
 }
 
 .student-details {
-  background-color: #151515;
-   
+  background-color: #ffffff;
+  color: #000000;
   padding: 10px;
   margin: 20px 0;
   font-family: Helvetica;
 }
+
+.student-details > * {
+  color: #000000;
+}
 .scholarships {
-  background-color: #151515;
+  background-color: #ffffff;
    
   padding: 10px;
   margin: 20px 0;
   font-family: Helvetica;
-  color: rgb(104, 93, 93);
+  color: #000000;
   font-weight: bold;
 }
 
@@ -187,9 +191,19 @@ h3 {
 }
 
 .choiceBtn {
-  margin-left: 10px;
-  background-color: #111111;
-  color: rgb(211, 210, 210);
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #5050509d;
+  padding:6px 15px;
+  margin: 10px;
+  border-radius: 12px;
+  box-shadow: 0 10px 10px rgba(230, 202, 222, 0.2);
+}
+
+.choiceBtn:hover {
+  cursor:pointer;
+  background-color: #3e3e3ec1;
+  color: #ffffff;
 }
 
 .choiceBtn.reject {
@@ -199,6 +213,7 @@ h3 {
 
 .choiceBtn.reject:hover {
   background-color: #902507;
+  cursor: pointer;
 }
 ul {
   list-style: none;
@@ -208,5 +223,22 @@ ul {
   margin-top: 10px;
   width: 1500px;
   max-width: 2000px;
+  background-color: #ffffff;
+}
+.logoutBtn {
+  margin-top: 40px;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #902507;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #902507;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+
+}
+
+.logoutBtn:hover {
+  background-color: #ff0000; /* Darker red on hover */
 }
 </style>

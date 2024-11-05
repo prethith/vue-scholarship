@@ -8,6 +8,60 @@ const message = ref('');
 const scholarshipData = ref([]);
 const toggleForm = ref(false);
 
+// Form data for new scholarship
+const newScholarship = ref({
+  scholarship_name: '',
+  scholarship_amt: 0,
+  max_income: null,
+  min_marks: null,
+  min_rank: null,
+  category_req: null,
+  capacity: 0,
+  sorting_criteria: null,
+  scholarship_provider: null,
+});
+
+// Add new scholarship to the database
+async function addScholarship() {
+  try {
+    const scholarshipToInsert = {
+      scholarship_name: newScholarship.value.scholarship_name,
+      scholarship_amt: newScholarship.value.scholarship_amt,
+      max_income: newScholarship.value.max_income,
+      min_marks: newScholarship.value.min_marks,
+      min_rank: newScholarship.value.min_rank,
+      category_req: newScholarship.value.category_req,
+      capacity: newScholarship.value.capacity,
+      sorting_criteria: newScholarship.value.sorting_criteria,
+      scholarship_provider: newScholarship.value.scholarship_provider
+    };
+
+    const { data, error } = await supabase.from('Scholarships').insert([scholarshipToInsert]);
+
+    if (error) {
+      throw error;
+    }
+    message.value = 'Scholarship added successfully!';
+
+    // Reset the form and hide it
+    newScholarship.value = {
+      scholarship_name: '',
+      scholarship_amt: 0,
+      max_income: null,
+      min_marks: null,
+      min_rank: null,
+      category_req: '',
+      capacity: 0,
+      sorting_criteria: '',
+      scholarship_provider: ''
+    };
+    toggleForm.value = false;
+  } catch (error) {
+    console.error('Error adding scholarship:', error);
+    message.value = 'Failed to add scholarship.';
+  }
+}
+
 // Trigger a round of assignment
 async function triggerAssignmentProcess() {
   isProcessing.value = true;
@@ -54,7 +108,7 @@ onMounted(async () => {
 <template>
   <div class="admin_dashboard">
     <div class="header">
-      <h2>Unified Scholarship Portal.</h2>
+      <h2>Unified Scholarship Portal</h2>
     </div>
     
     <div class="welcome-section">
@@ -80,24 +134,24 @@ onMounted(async () => {
 
     <button @click="toggleDisplayForm" class="AddScholarship"> ADD Scholarship</button>
 
-    <form action="" v-if="toggleForm" class="addScholarshipForm">
+    <form @submit.prevent="addScholarship" v-if="toggleForm" class="addScholarshipForm">
       <label for="sch_name">Scholarship Name:</label>
-      <input type="text" name="sch_name" id="sch_name">
+      <input  v-model="newScholarship.scholarship_name" type="text" name="sch_name" id="sch_name" required>
       
       <label for="">Scholarship Amount: </label>
-      <input type="number">
+      <input v-model="newScholarship.scholarship_amt" type="number" required>
       
       <label for="max_income">Max Income: </label>
-      <input type="number" name="max_income" id="max_income">
+      <input v-model="newScholarship.max_income" type="number" name="max_income" id="max_income">
       
       <label for="min_mark">Min Mark: </label>
-      <input type="number" id="min_mark" name="min_mark">
+      <input v-model="newScholarship.min_marks" type="number" id="min_mark" name="min_mark">
       
       <label for="min_rank">Min Rank: </label>
-      <input type="number" name="min_rank" id="min_rank">
+      <input v-model="newScholarship.min_rank" type="number" name="min_rank" id="min_rank">
       
       <label for="category">Category: </label>
-      <select name="category" id="category">
+      <select v-model="newScholarship.category_req" name="category" id="category">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -105,17 +159,17 @@ onMounted(async () => {
       </select>
 
       <label for="capacity">Capacity: </label>
-      <input type="number" name="capacity" id="capacity">
+      <input v-model="newScholarship.capacity" type="number" name="capacity" id="capacity">
 
       <label for="sorting_c">Sorting Criteria: </label>
-      <select name="sorting_c" id="sorting_c">
+      <select v-model="newScholarship.sorting_criteria" name="sorting_c" id="sorting_c" required>
         <option value="1">1 - Rank</option>
         <option value="2">2 - Income</option>
       </select>
 
       
       <label for="provider">Scholarship Provider: </label>
-      <select name="provider" id="provider">
+      <select v-model="newScholarship.scholarship_provider" name="provider" id="provider" required>
         <option value="central">Central</option>
         <option value="state">State</option>
         <option value="private">Private</option>
@@ -128,7 +182,7 @@ onMounted(async () => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .admin_dashboard {
   text-align: center;
   display: flex;
@@ -142,17 +196,14 @@ h1 {
   font-weight: 800;
   font-size: 40px;
   font-family: Helvetica;
-  font-style: italic;
 }
 
 h2 {
-  color: #bbb00b;
+  color: #000;
   font-weight: 800;
   font-size: 40px;
   margin-bottom: 10px;
   font-family: Helvetica;
-  background-color: #080808;
-  font-style: italic;
 }
 
 .header {
@@ -171,10 +222,15 @@ h2 {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 1em;
+  border-radius: 6px;
+  border-width: 1px;
 }
 
 .choiceBtn:hover {
   background-color: #4d4c4b; /* Darker shade for hover effect */
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .logoutBtn {
@@ -183,12 +239,15 @@ h2 {
   font-size: 1em;
   color: #fff;
   background-color: #902507;
-  border: none;
   cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #902507;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+
 }
 
 .logoutBtn:hover {
-  background-color: #754d40; /* Darker red on hover */
+  background-color: #ff0000; /* Darker red on hover */
 }
 
 
@@ -202,7 +261,6 @@ ul {
 
 /* Container Styles */
 .scholarships {
-  background-color: #000000; /* Light background for better contrast */
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
@@ -211,10 +269,9 @@ ul {
 /* Header Styles */
 .scholarships h3 {
   font-size: 24px;
-  color: #f4f4f4;
+  color: #000000;
   margin-bottom: 15px;
   text-align: center;
-  background-color: #000000;
 }
 
 /* List Styles */
@@ -225,9 +282,8 @@ ul {
 
 /* List Item Styles */
 .scholarships li {
-  background-color: #363636;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #494949;
+  border-radius: 8px;
   margin-bottom: 10px;
   padding: 12px 18px;
   transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
@@ -236,8 +292,9 @@ ul {
 
 /* Hover Effect */
 .scholarships li:hover {
-  background-color: #040404;
+  background-color: #8e8e8e;
   transform: translateY(-2px); /* Slight lift effect */
+  color: #fff;
 }
 
 /* Active State for Clicked Items */
@@ -306,5 +363,4 @@ ul {
   color: #000000;
   border-radius: 5px;
 }
-
 </style>
