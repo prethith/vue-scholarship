@@ -103,7 +103,7 @@ const handleLogout = () => {
 <template>
   <div class="student-view">
     <div class="header">
-      <h2>Unified Scholarship Portal.</h2>
+      <h2>Unified Scholarship Portal</h2>
     </div>
     <h1>Welcome, {{ studentData.name }}!</h1>
 
@@ -160,14 +160,14 @@ const handleLogout = () => {
 }
 
 .student-details {
-  background-color: #151515;
+  background-color: rgb(0, 0, 0);
    
   padding: 10px;
   margin: 20px 0;
   font-family: Helvetica;
 }
 .scholarships {
-  background-color: #151515;
+  background-color: rgb(0, 0, 0);
    
   padding: 10px;
   margin: 20px 0;
@@ -178,17 +178,24 @@ const handleLogout = () => {
 
 
 h1 {
-  color: #111111;
+  color: #ffffff;
   font-family: Helvetica;
+  font-style: normal;
+}
+
+h2{
+  color: #dede04;
+  font-family: Helvetica;
+  font-style: normal;
 }
 h3 {
-  color: #111111;
+  color: #dede04;
   font-family: Helvetica;
 }
 
 .choiceBtn {
   margin-left: 10px;
-  background-color: #111111;
+  background-color: rgb(0, 0, 0);
   color: rgb(211, 210, 210);
 }
 

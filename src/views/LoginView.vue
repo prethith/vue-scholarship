@@ -1,7 +1,7 @@
 <template>
   <div class="app-background">
     <div class="portal-header">
-      <h1> Unified Scholarship Portal. </h1>
+      <h1> Unified Scholarship Portal </h1>
     </div>
     <div class="login-container">
       <h1>Login.</h1>
@@ -11,7 +11,7 @@
         placeholder="Enter your user ID: "
         class="inputUsername"
       />
-      <button @click="login" class="loginBtn">Login</button>
+      <button @click="login" class="loginBtn">Proceed</button>
       <p v-if="invalidIDNotif">Invalid user ID!</p>
     </div>
   </div>
@@ -82,7 +82,7 @@ onMounted(() => {
 <style>
 /* Overall background styling */
 .app-background {
-  background-color: #000;
+  background-color: #0a0a0a;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -98,22 +98,23 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #0d0d0d;
+  color: #f7f7f9;
   padding: 20px;
-  background-color: rgb(5, 5, 5);
- 
-  width: 100%;
+  background-color: #080808;
+  padding-left: 50px;
+  width: 2500px;
   max-width: 800px;
   font-family: Helvetica;
 }
 
 .portal-header h1{
-  color: #bbb00b;
-  background-color: #000;
+  color: #dede04;
+  background-color: #040404;
   font-weight: 800;
   font-size: 40px;
   margin-bottom: 10px;
   font-family: Helvetica;
+  font-style: normal;
 }
 
 /* Container for login */
@@ -123,11 +124,11 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #0d0d0d;
-  padding: 20px;
-  background-color: rgb(108, 109, 100);
+  color: #080808;
+  
+  background-color: rgb(0, 0, 0);
   border-radius: 10px;
-  width: 1500px;
+  width:75% ;
   height: 500px;
   max-width: 2000px;
   margin: 0 auto;
@@ -136,56 +137,58 @@ onMounted(() => {
 
 /* Styling for the heading */
 .login-container h1 {
-  color: #080808;
+  color: #fffefe;
   font-weight: 800;
   font-size: 48px;
+  font-style: normal;
   margin-bottom: 10px;
   font-family: Helvetica;
 }
 
 /* Styling for buttons */
 .loginBtn {
-  width: 100%;
-  padding: 12px 20px;
-  background-color: #0f0e0e;
-  color: #fff;
+  width: 50%;
+  padding: 8px 16px;
+  background-color: #dede04;
+  color: #0a0a0a;
   border: none;
   border-radius: 25px;
   font-size: 16px;
   font-family: Helvetica;
   font-weight: bold;
-  font-style: italic;
+  width: 50px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .loginBtn:hover {
-  background-color: #555652;
+  background-color: #4d5033;
   box-shadow: 0 4px 10px rgba(230, 202, 222, 0.2);
 }
 
 /* Username input field */
 .inputUsername {
-  width: 100%;
+  width: 50%;
   padding: 12px 20px;
-  border: 1px solid #343433;
+  border: 1px solid #4d4d4c;
   border-radius: 25px;
   font-size: 16px;
   font-weight: lighter;
   outline: none;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
-  color: #121212;
+  color: #ffffff;
 }
 
 /* Placeholder text styling */
 .inputUsername::placeholder {
-  color: #383838;
+  color: #686868;
   font-weight: normal;
   font-size: 14px;
 }
 
 /* Focus effect for input */
 .inputUsername:focus {
+  width: 50%;
   border-color: transparent;
   box-shadow: 0 0 8px 3px rgba(63, 63, 60, 0.5);
 }
